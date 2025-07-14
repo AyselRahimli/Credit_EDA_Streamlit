@@ -581,89 +581,37 @@ def main():
             st.plotly_chart(fig, use_container_width=True)
     
     # TAB 8: DATA QUALITY
-    with tab8:
-        st.markdown('<div class="section-header">Data Quality Assessment</div>', unsafe_allow_html=True)
-        
-        # Missing values analysis
-        st.subheader("Missing Values Analysis")
-        
-        missing_data = df.isnull().sum()
-        missing_percent = (missing_data / len(df)) * 100
-        
-        missing_df = pd.DataFrame({
-            'Column': missing_data.index,
-            'Missing Count': missing_data.values,
-            'Missing Percentage': missing_percent.values
-        }).sort_values('Missing Count', ascending=False)
-        
-        fig = px.bar(
-            missing_df,
-            x='Column',
-            y='Missing Percentage',
-            title="Missing Values by Column"
-        )
-        fig.update_xaxis(tickangle=45)
-        st.plotly_chart(fig, use_container_width=True)
-        
-        st.dataframe(missing_df, use_container_width=True)
-        
-        # Outlier detection
-        st.subheader("Outlier Detection")
-        
-        if numerical_cols:
-            outlier_feature = st.selectbox(
-                "Select feature for outlier analysis:",
-                numerical_cols
-            )
-            
-            Q1 = df_filtered[outlier_feature].quantile(0.25)
-            Q3 = df_filtered[outlier_feature].quantile(0.75)
-            IQR = Q3 - Q1
-            lower_bound = Q1 - 1.5 * IQR
-            upper_bound = Q3 + 1.5 * IQR
-            
-            outliers = df_filtered[(df_filtered[outlier_feature] < lower_bound) | 
-                                 (df_filtered[outlier_feature] > upper_bound)]
-            
-            col1, col2 = st.columns(2)
-            with col1:
-                st.metric("Total Outliers", len(outliers))
-            with col2:
-                st.metric("Outlier Percentage", f"{len(outliers)/len(df_filtered)*100:.2f}%")
-            
-            fig = px.box(
-                df_filtered,
-                y=outlier_feature,
-                title=f"Outlier Detection - {outlier_feature}",
-                points="outliers"
-            )
-            st.plotly_chart(fig, use_container_width=True)
-        
-        # Data distribution summary
-        st.subheader("Data Distribution Summary")
-        
-        distribution_summary = []
-        for col in df_filtered.columns:
-            if df_filtered[col].dtype in ['int64', 'float64']:
-                skewness = df_filtered[col].skew()
-                kurtosis = df_filtered[col].kurtosis()
-                distribution_summary.append({
-                    'Column': col,
-                    'Type': 'Numerical',
-                    'Skewness': skewness,
-                    'Kurtosis': kurtosis,
-                    'Unique Values': df_filtered[col].nunique()
-                })
-            else:
-                distribution_summary.append({
-                    'Column': col,
-                    'Type': 'Categorical',
-                    'Skewness': 'N/A',
-                    'Kurtosis': 'N/A',
-                    'Unique Values': df_filtered[col].nunique()
-                })
-        
-        st.dataframe(pd.DataFrame(distribution_summary), use_container_width=True)
+with tab8:
+    st.markdown('<div class="section-header">Data Quality Assessment</div>', unsafe_allow_html=True)
+
+    # Missing values analysis
+    st.subheader("Missing Values Analysis")
+
+    missing_data = df.isnull().sum()
+    missing_percent = (missing_data / len(df)) * 100
+
+    missing_df = pd.DataFrame({
+        'Column': missing_data.index,
+        'Missing Count': missing_data.values,
+        'Missing Percentage': missing_percent.values
+    }).sort_values('Missing Count', ascending=False)
+
+    # Create bar chart for missing values
+    fig = px.bar(
+        missing_df,
+        x='Column',
+        y='Missing Percentage',
+        title="Missing Values by Column"
+    )
+    
+    # Safely update the x-axis tick angle
+    fig.update_layout(
+        xaxis_tickangle=45
+    )
+
+    st.plotly_chart(fig, use_container_width=True)
+
+    st.dataframe(missing_df, use_container_width=True)
 
 if __name__ == "__main__":
     main()
