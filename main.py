@@ -581,37 +581,37 @@ def main():
             st.plotly_chart(fig, use_container_width=True)
     
     # TAB 8: DATA QUALITY
-with tab8:
-    st.markdown('<div class="section-header">Data Quality Assessment</div>', unsafe_allow_html=True)
-
-    # Missing values analysis
-    st.subheader("Missing Values Analysis")
-
-    missing_data = df.isnull().sum()
-    missing_percent = (missing_data / len(df)) * 100
-
-    missing_df = pd.DataFrame({
-        'Column': missing_data.index,
-        'Missing Count': missing_data.values,
-        'Missing Percentage': missing_percent.values
-    }).sort_values('Missing Count', ascending=False)
-
-    # Create bar chart for missing values
-    fig = px.bar(
-        missing_df,
-        x='Column',
-        y='Missing Percentage',
-        title="Missing Values by Column"
-    )
-    
-    # Safely update the x-axis tick angle
-    fig.update_layout(
-        xaxis_tickangle=45
-    )
-
-    st.plotly_chart(fig, use_container_width=True)
-
-    st.dataframe(missing_df, use_container_width=True)
+    with tab8:
+        st.markdown('<div class="section-header">Data Quality Assessment</div>', unsafe_allow_html=True)
+        
+        # Missing values analysis
+        st.subheader("Missing Values Analysis")
+        
+        missing_data = df.isnull().sum()
+        missing_percent = (missing_data / len(df)) * 100
+        
+        missing_df = pd.DataFrame({
+            'Column': missing_data.index,
+            'Missing Count': missing_data.values,
+            'Missing Percentage': missing_percent.values
+        }).sort_values('Missing Count', ascending=False)
+        
+        # Create bar chart for missing values
+        fig = px.bar(
+            missing_df,
+            x='Column',
+            y='Missing Percentage',
+            title="Missing Values by Column"
+        )
+        
+        # Safely update the x-axis tick angle
+        fig.update_layout(
+            xaxis_tickangle=45
+        )
+        
+        st.plotly_chart(fig, use_container_width=True)
+        
+        st.dataframe(missing_df, use_container_width=True)
 
 if __name__ == "__main__":
     main()
